@@ -1,0 +1,63 @@
+package com.ita.softserveinc.achiever.service;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.ita.softserveinc.achiever.entity.Direction;
+import com.ita.softserveinc.achiever.entity.Group;
+import com.ita.softserveinc.achiever.entity.User;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.exception.InvalidDateException;
+import com.ita.softserveinc.achiever.tool.GroupFormBean;
+
+@Component
+public interface IGroupService {
+
+	void create(Group entity) throws ElementExistsException,
+			InvalidDateException;
+
+	Group update(Group entity) throws ElementExistsException,
+			InvalidDateException;
+
+	void delete(Group entity);
+
+	Date parseDate(String date);
+
+	Group findById(Long id);
+
+	List<Group> findAll();
+
+	List<Group> findByDirection(Direction direction);
+
+	Group findByName(String name);
+
+	List<Group> findByUser(User user);
+
+	List<Group> findByUser(String login);
+
+	List<Group> findFutureGroups();
+
+	List<Group> findFutureGroups(String login);
+
+	List<Group> findCurrentGroups();
+
+	List<Group> findCurrentGroups(String login);
+
+	List<Group> findFinishedGroups();
+
+	List<Group> findFinishedGroups(String login);
+	
+	List<Group> getChosenGroups(GroupFormBean groupFormBean, String login);
+	
+	List<Group> getChosenGroups(String login);
+	
+	void addGroup(GroupFormBean groupFormBean) throws ElementExistsException, InvalidDateException;
+	
+	void editGroup(GroupFormBean groupFormBean) throws ElementExistsException, InvalidDateException;
+
+	void applyToGroup(Long groupId, String login) throws ElementExistsException;
+	
+
+}

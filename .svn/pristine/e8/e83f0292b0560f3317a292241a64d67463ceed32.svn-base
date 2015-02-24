@@ -1,0 +1,87 @@
+package com.ita.softserveinc.achiever.tool;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+
+import com.ita.softserveinc.achiever.dao.IEventDao;
+import com.ita.softserveinc.achiever.entity.Event;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.service.IEventService;
+import com.ita.softserveinc.achiever.service.IGroupService;
+import com.ita.softserveinc.achiever.service.ILocationService;
+
+@Component
+public class ParseSchedule {
+	
+	@Autowired
+	private IGroupService groupService;
+	@Autowired
+	private ILocationService locationService;
+	@Autowired
+	private IEventService eventService;
+	@Autowired
+	private IEventDao eventdao;
+
+	public void readData(List <Event> events) throws IOException {
+		
+		String csv = "events.csv";
+		CSVWriter csvWriter = new CSVWriter(new FileWriter(csv));
+		List<String[]> data = toStringArray(events);
+		csvWriter.writeAll(data);
+		csvWriter.close();
+	}
+	
+	public List<String[]> toStringArray(List<Event> events) {
+		List<String[]> records = new ArrayList<String[]>();
+		// add header record
+		records.add(new String[] { "StartTime", "EndTime", "Group", "Direction", "Location" });
+		Iterator<Event> it = events.iterator();
+		while (it.hasNext()) {
+			Event event = it.next();
+			records.add(new String[] { event.getStartDatetime().toString(),
+					event.getEndDatetime().toString(), 
+					event.getGroup().getGroupName(),
+					event.getGroup().getDirection().getName(),
+					event.getLocation().getName()});
+		}
+		return records;
+	}
+	
+	public void parseCSVFileLineByLine() throws IOException {
+		// create CSVReader object
+		CSVReader reader = new CSVReader(new FileReader("events.csv"), ',');
+
+		// read line by line
+		String[] record = null;
+		// skip header row
+		reader.readNext();
+
+		while ((record = reader.readNext()) != null) {
+			Event event = new Event();
+			try {
+				event.setEndDatetime(eventService.parsingDateTime(record[0]));
+				event.setStartDatetime(eventService.parsingDateTime(record[1]));
+				event.setGroup(groupService.findByName(record[2]));
+				event.setLocation(locationService.findByName(record[4]));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+			try {
+				eventService.create(event);
+			} catch (ElementExistsException e) {
+				e.printStackTrace();
+			}
+		}
+		reader.close();
+	}
+}

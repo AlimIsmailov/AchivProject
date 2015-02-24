@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ROLES TYPE="Student" />
+	<ROLES TYPE="Admin" />
+	<ROLES TYPE="Moderator" />
+</dataset>

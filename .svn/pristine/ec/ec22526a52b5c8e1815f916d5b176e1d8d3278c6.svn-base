@@ -1,0 +1,315 @@
+package com.ita.softserveinc.achiever.dao;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.ita.softserveinc.achiever.entity.Role;
+import com.ita.softserveinc.achiever.entity.User;
+import com.ita.softserveinc.achiever.tool.UserSearchRequestForm;
+
+@Repository
+public class UserDaoImpl extends GenericDaoImpl<User> implements IUserDao {
+
+	@Autowired
+	private IRoleDao roleDao;
+
+	public User findByLogin(String login) {
+		User foundresult = null;
+		try {
+			foundresult = (User) entityManager
+					.createNamedQuery("User.findByLogin", User.class)
+					.setParameter("login", login).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} catch (NonUniqueResultException e) {
+			return null;
+		}
+		return foundresult;
+	}
+
+	public List<User> findByActiveStatus() {
+		List<User> foundresult = null;
+		try {
+			foundresult = (List<User>) entityManager.createNamedQuery(
+					"User.findByActiveStatus", User.class).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		} catch (NonUniqueResultException e) {
+			return null;
+		}
+		return foundresult;
+	}
+
+	public List<User> findByFName(int maxResult) {
+		List<User> fNameFinder = (List<User>) entityManager
+				.createNamedQuery("User.findByFName", User.class)
+				.setMaxResults(maxResult).getResultList();
+		return fNameFinder;
+	}
+
+	public List<User> findByLName(int maxResult) {
+		List<User> findByLName = (List<User>) entityManager
+				.createNamedQuery("User.findByLName", User.class)
+				.setMaxResults(maxResult).getResultList();
+		return findByLName;
+	}
+
+	public List<User> findByActiveStatusResultOnPage(int pageMax) {
+		List<User> foundresult = (List<User>) entityManager
+				.createQuery(
+						"SELECT u FROM User u ORDER BY u.active, u.login ASC",
+						User.class).setMaxResults(pageMax).getResultList();
+		return foundresult;
+	}
+
+	public List<User> findByActiveStatusPagination(int pagination, int maxResult) {
+		List<User> pagingOnJSP = (List<User>) entityManager
+				.createQuery(
+						"SELECT u FROM User u ORDER BY u.active, u.login ASC",
+						User.class).setFirstResult(pagination)
+				.setMaxResults(maxResult).getResultList();
+		return pagingOnJSP;
+	}
+
+	@Override
+	public List<User> findByDateOfCreating(int maxResult) {
+		List<User> foundUsersD = (List<User>) entityManager
+				.createQuery("SELECT u FROM User u ORDER BY u.created DESC",
+						User.class).setMaxResults(maxResult).getResultList();
+		return foundUsersD;
+	}
+
+	@Override
+	public List<User> findByDateOfCreating(int pagination, int maxResult) {
+		List<User> usersAllOnPage = (List<User>) entityManager
+				.createQuery("SELECT u FROM User u ORDER BY u.created DESC",
+						User.class).setFirstResult(pagination)
+				.setMaxResults(maxResult).getResultList();
+		return usersAllOnPage;
+	}
+
+	public User findByEmail(String email) {
+		User foundresult = null;
+		try {
+			foundresult = (User) entityManager
+					.createNamedQuery("User.findByEmail", User.class)
+					.setParameter("email", email).getSingleResult();
+		} catch (PersistenceException e) {
+			return null;
+		}
+		return foundresult;
+	}
+
+	@Override
+	public void delete(User user) {
+		user.setActive(0);
+	}
+
+	@Override
+	public List<User> findAllByRole(String type) {
+		List<User> foundUsers = null;
+		try {
+			foundUsers = entityManager
+					.createNamedQuery("User.findAllByRoles", User.class)
+					.setParameter("type", type).getResultList();
+		} catch (PersistenceException e) {
+			return null;
+		}
+		return foundUsers;
+
+	}
+
+	public List<User> findByGroup(String groupName) {
+		List<User> foundUsers = null;
+		try {
+			foundUsers = entityManager
+					.createNamedQuery("User.findByGroup", User.class)
+					.setParameter("groupName", groupName).getResultList();
+		} catch (PersistenceException e) {
+			return null;
+		}
+		return foundUsers;
+	}
+
+	public List<User> findByGroup(String groupName, String roletype) {
+		List<User> foundUsers = null;
+		try {
+			foundUsers = entityManager
+					.createNamedQuery("User.findByGroupAndRole", User.class)
+					.setParameter("groupName", groupName)
+					.setParameter("type", roletype).getResultList();
+		} catch (PersistenceException e) {
+			return null;
+		}
+		return foundUsers;
+	}
+
+	@Override
+	public List<User> findByRoleAndByGroup(String type, String groupName) {
+		List<User> foundUsers = null;
+		try {
+			foundUsers = entityManager
+					.createNamedQuery("User.findByRoleAndByGroup", User.class)
+					.setParameter("groupName", groupName)
+					.setParameter("type", type).getResultList();
+		} catch (PersistenceException e) {
+			return null;
+		}
+		return foundUsers;
+	}
+
+	@Override
+	public List<User> findByLoginASC(int maxResult) {
+		List<User> foundUsersD = null;
+		foundUsersD = entityManager
+				.createNamedQuery("User.findByLoginASC", User.class)
+				.setMaxResults(maxResult).getResultList();
+		return foundUsersD;
+	}
+
+	public List<User> findByUserRequest(UserSearchRequestForm searchRequest) {
+		String firstName = searchRequest.getFirstNameOrLoginOrEmail();
+		String login = searchRequest.getFirstNameOrLoginOrEmail();
+		String email = searchRequest.getFirstNameOrLoginOrEmail();
+		String surName = searchRequest.getSurName();
+		String statusOption = searchRequest.getStatusOption();
+		String operationOnRoles = searchRequest.getOperationOnRoles();
+		Set<Role> selectedRoles = new HashSet<Role>();
+		Predicate mainPredicate = null;
+		Predicate rolesPredicate = null;
+		Predicate statusPredicate = null;
+		Predicate summary = null;
+
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> userRoot = cq.from(User.class);
+		cq.select(userRoot);
+
+		if (searchRequest.isSearchByName()) {
+
+			if (firstName.equals("")) {
+				if (surName.equals("*")) {
+					// 3
+					mainPredicate = null;
+				} else {
+					// 6
+					mainPredicate = cb.equal(userRoot.get("lastName"), surName);
+				}
+			} else if (surName.equals("")) {
+				if (firstName.equals("*")) {
+					// 4
+					mainPredicate = null;
+				} else {
+					// 5
+					mainPredicate = cb.equal(userRoot.get("firstName"),
+							firstName);
+				}
+			} else if (firstName.equals("*")) {
+				if (surName.equals("*")) {
+					// 8
+					mainPredicate = null;
+				} else {
+					// 1
+					mainPredicate = cb.equal(userRoot.get("lastName"), surName);
+				}
+			} else if (surName.equals("*")) {
+				// 2
+				mainPredicate = cb.equal(userRoot.get("firstName"), firstName);
+			} else
+				// 7
+				mainPredicate = cb.and(
+						cb.equal(userRoot.get("lastName"), surName),
+						cb.equal(userRoot.get("firstName"), firstName));
+		}
+
+		if (searchRequest.isSearchByLogin()) {
+			if (!login.equals("*")) {
+				mainPredicate = cb.equal(userRoot.get("login"), login);
+			}
+		}
+
+		if (searchRequest.isSearchByEmail()) {
+			if (!email.equals("*")) {
+				mainPredicate = cb.equal(userRoot.get("email"), email);
+			}
+		}
+
+		// Advanced mode
+		if (searchRequest.isAdvancedMode()) {
+
+			if (searchRequest.getSelectedRoles() == null)
+				return Collections.emptyList();
+
+			for (Role role : searchRequest.getSelectedRoles()) {
+				selectedRoles.add(roleDao.findByType(role.getType()));
+			}
+
+			if (selectedRoles.size() > 1) {
+				int i = 0;
+				for (Role role : selectedRoles) {
+					if (i == 0)
+						rolesPredicate = cb.isMember(role,
+								userRoot.<Set<Role>> get("roles"));
+					else {
+						if (operationOnRoles.equals("AND")) {
+							rolesPredicate = cb.and(
+									rolesPredicate,
+									cb.isMember(role,
+											userRoot.<Set<Role>> get("roles")));
+						}
+
+						if (operationOnRoles.equals("OR")) {
+							rolesPredicate = cb.or(
+									rolesPredicate,
+									cb.isMember(role,
+											userRoot.<Set<Role>> get("roles")));
+						}
+					}
+					i++;
+				}
+			} else
+				rolesPredicate = cb.isMember(selectedRoles.iterator().next(),
+						userRoot.<Set<Role>> get("roles"));
+
+			if (!statusOption.equals("any")) {
+				statusPredicate = cb.equal(userRoot.get("active"),
+						Integer.parseInt(statusOption));
+
+				if (mainPredicate == null)
+					summary = cb.and(statusPredicate, rolesPredicate);
+				else
+					summary = cb.and(statusPredicate, mainPredicate,
+							rolesPredicate);
+
+			} else if (mainPredicate == null)
+				summary = rolesPredicate;
+			else
+				summary = cb.and(mainPredicate, rolesPredicate);
+
+			if (summary != null)
+				cq.where(summary);
+
+		} else if (mainPredicate != null)
+			cq.where(mainPredicate);
+
+		TypedQuery<User> q = entityManager.createQuery(cq);
+		List<User> allUsers = q.getResultList();
+
+		return allUsers;
+	}
+
+}

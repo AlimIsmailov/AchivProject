@@ -1,0 +1,150 @@
+package com.ita.softserveinc.achiever.service;
+
+import static org.junit.Assert.*;
+
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import org.junit.Test;
+
+import com.ita.softserveinc.achiever.entity.Group;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.exception.InvalidDateException;
+import com.ita.softserveinc.achiever.tool.DateValidator;
+
+import static org.mockito.Mockito.*;
+
+public class IGroupServiceTest {
+
+	@Test(expected=ElementExistsException.class)
+	public void testCreateExistedElement() throws ElementExistsException, InvalidDateException {
+		Group group = mock(Group.class);
+		IGroupService groupService = mock(IGroupService.class);
+		doThrow(new ElementExistsException()).when(groupService).create(group);
+		groupService.create(group);
+	}
+	
+	@Test(expected=InvalidDateException.class)
+	public void testCreateInvalidDate() throws ElementExistsException, InvalidDateException{
+		Group group = mock(Group.class);
+		IGroupService groupService = mock(IGroupService.class);
+		doThrow(new InvalidDateException()).when(groupService).create(group);
+		groupService.create(group);
+	}
+
+	@Test(expected=ElementExistsException.class)
+	public void testUpdateExistedElement() throws ElementExistsException, InvalidDateException {
+		Group group = mock(Group.class);
+		IGroupService groupService = mock(IGroupService.class);
+		doThrow(new InvalidDateException()).when(groupService).update(group);
+		groupService.update(group);
+	}
+	
+	@Test(expected=InvalidDateException.class)
+	public void testUpdateInvalidDate() throws ElementExistsException, InvalidDateException{
+		Group group = mock(Group.class);
+		IGroupService groupService = mock(IGroupService.class);
+		doThrow(new InvalidDateException()).when(groupService).update(group);
+		groupService.update(group);
+	}
+
+	@Test
+	public void testParseDate(){
+		IGroupService groupService = new GroupServiceImpl();
+		String date = "2014-08-15";
+		Date expected = new Date();
+		Calendar calendar = GregorianCalendar.getInstance();
+		calendar.set(2014, 7, 15, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		expected=calendar.getTime();
+		Date actual = groupService.parseDate(date);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testParseDateWithException() {
+		IGroupService groupService = new GroupServiceImpl();
+		String date = "2014a-08a-15q";
+		Date actual = groupService.parseDate(date);
+		assertNull(actual);
+	}
+
+	@Test
+	public void testIsValidDates() {
+		IGroupService groupService = new GroupServiceImpl();
+		Calendar startCalendar = GregorianCalendar.getInstance();
+		startCalendar.set(2014, 7, 17, 0, 0, 0);
+		Date startDate = startCalendar.getTime();
+		Calendar endCalendar = GregorianCalendar.getInstance();
+		endCalendar.set(2014, 7, 18, 0, 0, 0);
+		Date endDate = endCalendar.getTime();
+		assertTrue(groupService.isValidDates(startDate, endDate));
+	}
+	
+	@Test
+	public void testIsValidDatesNull(){
+		IGroupService groupService = new GroupServiceImpl();
+		Date startDate = null;
+		Date endDate = new Date();
+		assertFalse(groupService.isValidDates(startDate, endDate));
+	}
+	
+	@Test
+	public void testIsValidDatesEndBefore(){
+		IGroupService groupService = new GroupServiceImpl();
+		Calendar startCalendar = GregorianCalendar.getInstance();
+		startCalendar.set(2014, 7, 17, 0, 0, 0);
+		Date startDate = startCalendar.getTime();
+		Calendar endCalendar = GregorianCalendar.getInstance();
+		endCalendar.set(2014, 3, 5, 0, 0, 0);
+		Date endDate = endCalendar.getTime();
+		assertFalse(groupService.isValidDates(startDate, endDate));
+	}
+	
+	@Test
+	public void testIsValidDatesEquals(){
+		IGroupService groupService = new GroupServiceImpl();
+		Calendar startCalendar = GregorianCalendar.getInstance();
+		startCalendar.set(2014, 7, 17, 0, 0, 0);
+		startCalendar.set(Calendar.MILLISECOND, 0);
+		Date startDate = startCalendar.getTime();
+		Calendar endCalendar = GregorianCalendar.getInstance();
+		endCalendar.set(2014, 7, 17, 0, 0, 0);
+		endCalendar.set(Calendar.MILLISECOND, 0);
+		Date endDate = endCalendar.getTime();
+		assertFalse(groupService.isValidDates(startDate, endDate));
+	}
+
+	@Test
+	public void testGetChosenGroupsGroupFormBeanString() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetChosenGroupsString() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetGroup() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetGroupToEdit() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testApplyToGroup() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetResultsOnPageCount() {
+		fail("Not yet implemented");
+	}
+
+}

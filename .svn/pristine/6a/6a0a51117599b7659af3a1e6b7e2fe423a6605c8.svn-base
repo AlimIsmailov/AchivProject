@@ -1,0 +1,9 @@
+package com.ita.softserveinc.achiever.exception;
+
+@SuppressWarnings("serial")
+public class InvalidFileTypeException extends Exception {
+
+	public InvalidFileTypeException(String message) {
+		super(message);
+	}
+}

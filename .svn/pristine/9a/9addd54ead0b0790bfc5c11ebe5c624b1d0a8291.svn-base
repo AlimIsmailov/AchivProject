@@ -1,0 +1,86 @@
+package com.ita.softserveinc.achiever.service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ita.softserveinc.achiever.controller.ApplicationController;
+import com.ita.softserveinc.achiever.dao.IDirectionDao;
+import com.ita.softserveinc.achiever.entity.Direction;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.paging.DirectionPaging;
+
+@Service
+public class DirectionServiceImpl implements IDirectionService {
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ApplicationController.class);
+
+	@Autowired
+	private IDirectionDao directionDao;
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void create(Direction entity) throws ElementExistsException{
+		if (findByName(entity.getName())!=null){
+			throw new ElementExistsException();
+		}
+			directionDao.create(entity);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Direction update(Direction entity) throws ElementExistsException {
+		if ((findByName(entity.getName()) != null)) {
+			throw new ElementExistsException();
+		}
+		return directionDao.update(entity);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void delete(Direction entity) {
+		directionDao.delete(entity);
+	}
+
+	public Direction findById(Long id) {
+		return directionDao.findById(Direction.class, id);
+	}
+
+	public List<Direction> findAll() {
+		return directionDao.findAll(Direction.class);
+	}
+
+	@Override
+	public Direction findByName(String name) {
+			return directionDao.findByName(name);
+	}
+	
+	@Override
+	public List<Integer> getResultsOnPageCount() {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(DirectionPaging.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			ClassPathResource cpr = new ClassPathResource("/jaxb-xml/direction-paging-configuration.xml");
+			InputStream inputs =  cpr.getInputStream();
+			DirectionPaging result = (DirectionPaging) unmarshaller.unmarshal(inputs);
+			System.err.println("Direction.getCount: "+result.getCountOfResults());
+			return result.getCountOfResults();
+		} catch (JAXBException e) {
+			LOG.info("JAXB Exception");
+		} catch (IOException e) {
+			LOG.info("File not found");
+		}
+		return null;
+	}
+
+}

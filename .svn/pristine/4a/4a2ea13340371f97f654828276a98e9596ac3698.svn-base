@@ -1,0 +1,77 @@
+package com.ita.softserveinc.achiever.dao;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ita.softserveinc.achiever.entity.Subtopic;
+import com.ita.softserveinc.achiever.entity.Topic;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+
+
+
+public class SubtopicDaoTest {
+
+	@Autowired
+	public static ISubtopicDao subtopicDAO;
+	public static Topic topic;
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		
+		String[] userData = { "Core", "JDBC", "JPA", "SQL", "MSSQL" };
+		TopicDaoImpl topicDAO = new TopicDaoImpl();
+		Topic topic = topicDAO.findById(Topic.class, 1L);
+
+		for (int i = 0; i < 5; i++) {
+			Subtopic subtopic = new Subtopic();
+			subtopic.setName(userData[i]);
+			subtopic.setTopic(topic);
+			subtopicDAO.create(subtopic);
+		}
+	}
+
+	@Test
+	public void testCreate() {
+		Long id = 6L;
+		Subtopic subtopic = new Subtopic();
+		subtopic.setName("JAVA");
+		subtopic.setTopic(topic);
+		subtopicDAO.create(subtopic);
+		Subtopic actual = subtopicDAO.findById(Subtopic.class, id);
+		assertEquals(subtopic, actual);
+	}
+
+	@Test
+	public void testUpdateName() {
+		Long ID = 4L;
+		String expected = "JTDS";
+		Subtopic subById = subtopicDAO.findById(Subtopic.class, ID);
+		subById.setName(expected);
+		subtopicDAO.update(subById);
+		String actual = subtopicDAO.findById(Subtopic.class, ID).getName();
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testGetById() {
+		Long expected = 3L;
+		Long actual = subtopicDAO.findById(Subtopic.class, expected).getId();
+		assertEquals(expected, actual);
+
+	}
+
+	@Test
+	public void testDelete() {
+		Long id = 7L;
+		Subtopic subtopic = subtopicDAO.findById(Subtopic.class, id);
+		subtopicDAO.delete(subtopic);
+		Subtopic actual = subtopicDAO.findById(Subtopic.class, id);
+		assertNull(actual);
+
+	}
+	
+}

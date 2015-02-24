@@ -1,0 +1,367 @@
+package com.ita.softserveinc.achiever.service;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ita.softserveinc.achiever.dao.IEventDao;
+import com.ita.softserveinc.achiever.entity.Event;
+import com.ita.softserveinc.achiever.entity.Group;
+import com.ita.softserveinc.achiever.entity.Location;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.exception.InvalidDateException;
+import com.ita.softserveinc.achiever.tool.EventFormBean;
+import com.ita.softserveinc.achiever.tool.ParseSchedule;
+import com.ita.softserveinc.achiever.tool.UploadedFileTypeDetector;
+
+@Service
+public class EventServiceImpl implements IEventService {
+
+	private final int MINUTES = 0;
+	private final int SECONDS = 0;
+	private final int MILLIES = 0;
+
+	@Autowired
+	private IEventDao eventDao;
+	@Autowired
+	private IGroupService groupService;
+	@Autowired
+	private ILocationService locationService;
+	@Autowired
+	private IUserService userService;
+	@Autowired
+	private ParseSchedule parseSchedule;
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(EventServiceImpl.class);
+
+	private static final int BUFFER_SIZE = 4096;
+
+	@Transactional
+	public void create(Event event) throws ElementExistsException {
+		if ((event.getLocation() != null) && (event.getStartDatetime() != null)
+				& (event.getEndDatetime() != null)) {
+			logger.info("This element already exists!");
+		} else
+			eventDao.create(event);
+		eventDao.create(event);
+	}
+
+	@Transactional
+	public Event update(Event event) {
+
+		return eventDao.update(event);
+	}
+
+	@Transactional
+	public void delete(Event entity) {
+		eventDao.delete(entity);
+	}
+
+	private boolean existInDbValidation(Event event) {
+		Event existInDbEvent = eventDao.findExistEvent(event.getLocation(),
+				event.getStartDatetime(), event.getEndDatetime());
+		if (!existInDbEvent.equals(null))
+			return true;
+		else
+			return false;
+	}
+
+	public Event findById(Long id) {
+		return eventDao.findById(Event.class, id);
+	}
+
+	public List<Event> findAll() {
+		return eventDao.findAll(Event.class);
+	}
+
+	@Override
+	public List<Event> findByUser(String login, DateTime start, DateTime end) {
+		return eventDao.findEventsByUserBetweenDates(login, start, end);
+	}
+
+	@Override
+	public DateTime parsingDateTime(String dateTime) {
+
+		DateTimeFormatter df = DateTimeFormat
+				.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		DateTime date = df.parseDateTime(dateTime);
+
+		return date;
+	}
+
+	@Override
+	public DateTime convertDateTime(String eventDate, String time) {
+
+		logger.info("EventDate on Service: " + eventDate);
+		String subdate = eventDate.substring(eventDate.length() - 10);
+		int substr = Integer.parseInt(time.substring(0, 2));
+
+		DateTime tempdate = DateTime.parse(subdate,
+				DateTimeFormat.forPattern("dd-MM-yyyy"));
+		DateTime dateTime = tempdate.withHourOfDay(substr);
+
+		return dateTime;
+
+	}
+
+	@Override
+	public List<Group> findGroupForJsp(String varFromJsp) {
+
+		List<Group> groups = new ArrayList<Group>();
+
+		if (groupService.findByName(varFromJsp) != null) {
+			groups.add(groupService.findByName(varFromJsp));
+		} else if (userService.findByLogin(varFromJsp) != null) {
+			groups = groupService.findByUser((userService
+					.findByLogin(varFromJsp)));
+		} else {
+			groups = groupService.findAll();
+		}
+
+		return groups;
+	}
+
+	@Override
+	public List<Location> findLocationForJsp(String varFromJsp) {
+
+		List<Location> locations = new ArrayList<Location>();
+
+		if (locationService.findByName(varFromJsp) != null) {
+			locations.add(locationService.findByName(varFromJsp));
+		} else {
+			locations = locationService.findAll();
+		}
+
+		return locations;
+	}
+
+	@Override
+	public List<Event> findEventsForDownload(String varFromJsp) {
+
+		List<Event> events = new ArrayList<Event>();
+
+		if (groupService.findByName(varFromJsp) != null) {
+			long groupId = groupService.findByName(varFromJsp).getId();
+			events = eventDao.findEventsByGroup(groupId);
+		} else if (userService.findByLogin(varFromJsp) != null) {
+			events = eventDao.findEventsByUser(varFromJsp);
+		} else if (locationService.findByName(varFromJsp) != null) {
+			long locationId = locationService.findByName(varFromJsp).getId();
+			events = eventDao.findEventsByLocation(locationId);
+		}
+		return events;
+	}
+
+	@Override
+	public List<Event> findEventsForDownload(String varFromJsp, DateTime start,
+			DateTime end) {
+
+		List<Event> events = new ArrayList<Event>();
+
+		if (groupService.findByName(varFromJsp) != null) {
+			long groupId = groupService.findByName(varFromJsp).getId();
+			events = eventDao
+					.findEventsByGroupBetweenDates(groupId, start, end);
+		} else if (userService.findByLogin(varFromJsp) != null) {
+			events = eventDao.findEventsByUserBetweenDates(varFromJsp, start,
+					end);
+		} else if (locationService.findByName(varFromJsp) != null) {
+			long locationId = locationService.findByName(varFromJsp).getId();
+			events = eventDao.findEventsByLocationBetweenDates(locationId,
+					start, end);
+		}
+		return events;
+	}
+
+	@Override
+	public List<Event> findCurrentWeekEvents(DateTime dateTime,
+			String varFromJsp) {
+
+		List<Event> events = new ArrayList<Event>();
+		DateTime startweek = dateTime.dayOfWeek().withMinimumValue();
+		DateTime endweek = dateTime.dayOfWeek().withMaximumValue();
+
+		if (groupService.findByName(varFromJsp) != null) {
+			long groupId = groupService.findByName(varFromJsp).getId();
+			events = eventDao.findEventsByGroupBetweenDates(groupId, startweek,
+					endweek);
+		} else if (userService.findByLogin(varFromJsp) != null) {
+			events = eventDao.findEventsByUserBetweenDates(varFromJsp,
+					startweek, endweek);
+		} else if (locationService.findByName(varFromJsp) != null) {
+			long locationId = locationService.findByName(varFromJsp).getId();
+			events = eventDao.findEventsByLocationBetweenDates(locationId,
+					startweek, endweek);
+		}
+		return events;
+	}
+
+	@Override
+	public DateTime currentDateTime(String newWeek) {
+
+		int weeknum = 0;
+		if (StringUtils.isEmpty(newWeek)) {
+			weeknum = new DateTime().getWeekOfWeekyear();
+		} else
+			weeknum = Integer.parseInt(newWeek);
+		int week = weeknum;
+		DateTime newDate = new DateTime().withWeekOfWeekyear(week);
+
+		return newDate;
+	}
+
+	@Override
+	public Event getEvent(EventFormBean eventFormBean)
+			throws ElementExistsException, InvalidDateException {
+
+		Event event = new Event();
+		getEventforEdit(eventFormBean, event);
+		return event;
+	}
+
+	@Override
+	public Event getEditableEvent(EventFormBean eventFormBean, DateTime dateTime) {
+
+		Event event = findById(eventFormBean.getEvent().getId());
+		getEventforEdit(eventFormBean, event);
+		return event;
+	}
+
+	private void getEventforEdit(EventFormBean eventFormBean, Event event) {
+
+		String date = eventFormBean.getEventDate();
+		logger.info("EventDate in EventFormBean:" +  eventFormBean.getEventDate());
+		String starttime = eventFormBean.getStarttime();
+		logger.info("Startime in EventFormBean:" + eventFormBean.getStarttime());
+		String endtime = eventFormBean.getEndtime();
+		logger.info("Endtime in EventFormBean:" + eventFormBean.getEndtime());
+		DateTime startTime = convertDateTime(date, starttime);
+		DateTime endTime = convertDateTime(date, endtime);
+		event.setStartDatetime(startTime);
+		event.setEndDatetime(endTime);
+		Group group = eventFormBean.getGroup();
+		event.setGroup(groupService.findByName(group.getGroupName()));
+		Location location = eventFormBean.getLocation();
+		event.setLocation(locationService.findByName(location.getName()));
+	}
+
+	@Override
+	public void readEventsFromDb(List<Event> events) throws IOException {
+		parseSchedule.readData(events);
+
+	}
+
+	@Override
+	public void writeEventsToDb() throws IOException {
+		parseSchedule.parseCSVFileLineByLine();
+
+	}
+
+	@Override
+	public void uploadFile(String name, MultipartFile file) {
+
+		if (!file.isEmpty()) {
+			try {
+				byte[] bytes = file.getBytes();
+
+				// Creating the directory to store file
+				String rootPath = "D:/Programs/eclipse";
+				File dir = new File(rootPath + File.separator);
+				if (!dir.exists())
+					dir.mkdirs();
+
+				// Create the file on server
+				File serverFile = new File(dir.getAbsolutePath()
+						+ File.separator + name);
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(serverFile));
+				stream.write(bytes);
+				stream.close();
+
+				logger.info("Server File Location="
+						+ serverFile.getAbsolutePath());
+
+				logger.info("You successfully uploaded file=" + name);
+			} catch (Exception e) {
+				logger.info("You failed to upload " + name + " => "
+						+ e.getMessage());
+			}
+		} else {
+			logger.info("You failed to upload " + name
+					+ " because the file was empty.");
+		}
+	}
+
+	@Override
+	public void downloadFile(HttpServletResponse response) {
+
+		String filePath = "D:/Programs/eclipse/events.csv";
+		String csvFileName = "events.csv";
+
+		File downloadFile = new File(filePath);
+
+		Path path = downloadFile.toPath();
+		String mimeType = null;
+		UploadedFileTypeDetector fileTypeDetector = new UploadedFileTypeDetector();
+		try {
+			mimeType = fileTypeDetector.probeContentType(path);
+		} catch (IOException e) {
+			logger.info("There was a problem in getting mimeType from file");
+		}
+		String headerKey = "Content-Disposition";
+		String headerValue = String.format("attachment; filename=\"%s\"",
+				csvFileName);
+		FileInputStream fileInputStream = null;
+		OutputStream outputStream = null;
+
+		try {
+			fileInputStream = new FileInputStream(downloadFile);
+			response.setContentType(mimeType);
+			response.setHeader(headerKey, headerValue);
+			outputStream = response.getOutputStream();
+		} catch (FileNotFoundException e) {
+			logger.info("File not found");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		byte[] buffer = new byte[BUFFER_SIZE];
+		int bytesRead = -1;
+
+		try {
+			while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+				outputStream.write(buffer, 0, bytesRead);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fileInputStream.close();
+				outputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}

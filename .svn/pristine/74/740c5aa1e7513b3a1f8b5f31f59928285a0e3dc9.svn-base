@@ -1,0 +1,163 @@
+package com.ita.softserveinc.achiever.controller;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.ita.softserveinc.achiever.entity.Direction;
+import com.ita.softserveinc.achiever.entity.Group;
+import com.ita.softserveinc.achiever.entity.QuizResult;
+import com.ita.softserveinc.achiever.entity.Subtopic;
+import com.ita.softserveinc.achiever.entity.Topic;
+import com.ita.softserveinc.achiever.entity.UserAnswer;
+import com.ita.softserveinc.achiever.exception.NotEnoughElementsExeption;
+import com.ita.softserveinc.achiever.service.IGroupService;
+import com.ita.softserveinc.achiever.service.IQuizResultService;
+import com.ita.softserveinc.achiever.service.ISubtopicService;
+import com.ita.softserveinc.achiever.service.ITopicService;
+import com.ita.softserveinc.achiever.service.IUserService;
+import com.ita.softserveinc.achiever.tool.GenerateTestFormBean;
+import com.ita.softserveinc.achiever.tool.PassTestFormBean;
+
+/**
+ * @author Ruslan Didyk
+ */
+@Controller
+public class TestingController {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TestingController.class);
+
+	@Autowired
+	private IQuizResultService quizService;
+
+	@Autowired
+	private IGroupService groupService;
+
+	@Autowired
+	private ISubtopicService subtopicService;
+
+	@Autowired
+	private IUserService userService;
+
+	@Autowired
+	private ITopicService topicService;
+
+	@RequestMapping(value = "/testing/my-tests", method = RequestMethod.GET)
+	public String showUserTesting(Model model, Principal principal) {
+		String login = principal.getName();
+		model.addAttribute("quizResult", new QuizResult());
+		model.addAttribute("quizResultList", quizService.findAllByUser(login));
+		return "testing/my-tests";
+	}
+
+	@RequestMapping(value = "/testing/my-test-detail", method = RequestMethod.POST)
+	public String showTestDetail(Model model,
+			@ModelAttribute("quizResult") QuizResult quizResult) {
+		QuizResult quiz = quizService.findById(quizResult.getId());
+		model.addAttribute("quizResult", quiz);
+		return "testing/my-test-detail";
+	}
+
+	@RequestMapping(value = "/testing/generate", method = RequestMethod.GET)
+	public String showGenereTestForm(Model model) {
+		model.addAttribute("testFormBean", new GenerateTestFormBean());
+		model.addAttribute("groupList", groupService.findCurrentGroups());
+		model.addAttribute("counts", quizService.getCount());
+		return "/testing/generate-tests";
+	}
+
+	@RequestMapping(value = "/testing/addTest", method = RequestMethod.POST)
+	public String addTest(
+			@Valid @ModelAttribute("testFormBean") GenerateTestFormBean testFormBean,
+			BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("groupList", groupService.findCurrentGroups());
+			model.addAttribute("counts", quizService.getCount());
+			return "/testing/generate-tests";
+		}
+		Group group = groupService.findByName(testFormBean.getGroupName());
+		Subtopic subtopic = subtopicService.findByName(testFormBean
+				.getSubtopicName());
+		int countOfQuestions = testFormBean.getCountOfQuestions();
+		String name = testFormBean.getQuizName();
+		try {
+			quizService.generateTest(name, group, subtopic, countOfQuestions);
+		} catch (NotEnoughElementsExeption e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/testing/generate";
+		}
+		redirectAttributes.addFlashAttribute("success", true);
+		return "redirect:/testing/generate";
+	}
+
+	@RequestMapping(value = "/testing/pass-the-test", method = RequestMethod.POST)
+	public String passTheTestForm(Model model,
+			@ModelAttribute("quizResult") QuizResult quizResult) {
+		QuizResult quiz = quizService.findById(quizResult.getId());
+		shuffleAnswers(quiz);
+		model.addAttribute("quiz", quiz);
+		model.addAttribute("testFormBean", new PassTestFormBean());
+		return "testing/pass-the-test";
+	}
+
+	@RequestMapping(value = "/testing/finish", method = RequestMethod.POST)
+	public String finishTest(
+			@ModelAttribute("testFormBean") PassTestFormBean testFormBean) {
+		Map<String, List<String>> testsData = testFormBean.getTestsData();
+		QuizResult quizResult = quizService.findById(testFormBean.getId());
+		quizService.saveAndCheckTest(quizResult, testsData);
+		return "redirect:/testing/my-tests";
+	}
+
+	@RequestMapping(value = "/testing/topics")
+	@ResponseBody
+	public List<String> getTopicsByGroup(
+			@RequestParam(value = "groupName") String groupName) {
+		Group group = groupService.findByName(groupName);
+		Direction direction = group.getDirection();
+		List<Topic> topics = direction.getTopics();
+		List<String> resultList = new ArrayList<String>();
+		for (Topic topic : topics) {
+			resultList.add(topic.getTopicName());
+		}
+		return resultList;
+	}
+
+	@RequestMapping(value = "/testing/subtopics")
+	@ResponseBody
+	public List<String> getSubtopicsByTopic(
+			@RequestParam(value = "topicName") String topicName) {
+		Topic topic = topicService.findByName(topicName);
+		List<Subtopic> subtopics = topic.getSubtopics();
+		List<String> resultList = new ArrayList<String>();
+		for (Subtopic subtopic : subtopics) {
+			resultList.add(subtopic.getName());
+		}
+		return resultList;
+	}
+
+	public void shuffleAnswers(QuizResult quizResult) {
+		for (UserAnswer userAnswer : quizResult.getUserAnswers()) {
+			Collections.shuffle(userAnswer.getQuestion().getAnswers());
+		}
+	}
+
+}

@@ -1,0 +1,79 @@
+package com.ita.softserveinc.achiever.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.ita.softserveinc.achiever.entity.Location;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.exception.InvalidDateException;
+import com.ita.softserveinc.achiever.service.ILocationService;
+
+/**
+ * 
+ * @author Andriana
+ * 
+ */
+@Controller
+public class LocationController {
+
+	@Autowired
+	private ILocationService locationService;
+
+	@RequestMapping("/location")
+	public String listLocations(Model model) {
+		model.addAttribute("location", new Location());
+		model.addAttribute("locationList", locationService.findAll());
+		return "location/location";
+	}
+
+	@RequestMapping(value = "/addLocation", method = RequestMethod.POST)
+	public String addLocation(
+			@Valid @ModelAttribute("location") Location location,
+			BindingResult result) throws InvalidDateException {
+		if (result.hasErrors()) {
+			return "redirect:/location?fail=true";
+		}
+		try {
+			locationService.create(location);
+		} catch (ElementExistsException e) {
+			return "redirect:/location?fail=true";
+		}
+		return "redirect:/location?success=true";
+	}
+
+	@RequestMapping(value = "/editLocation", method = RequestMethod.POST)
+	public String editLocation(
+			@Valid @ModelAttribute("location") Location location,
+			BindingResult result) throws InvalidDateException {
+		if (result.hasErrors()) {
+			return "redirect:/location?fail=true";
+		}
+		Location eLocation = locationService.findById(location.getId());
+		if (eLocation.equals(location)) {
+			return "redirect:/location";
+		}
+		eLocation.setName(location.getName());
+		try {
+			locationService.update(eLocation);
+		} catch (ElementExistsException e) {
+			return "redirect:/location?fail=true";
+		}
+		return "redirect:/location?success=true";
+	}
+
+	@RequestMapping(value = "/location/delete/{locationId}", method = RequestMethod.GET)
+	public String deleteLocation(@PathVariable("locationId") Long id) {
+		Location location = locationService.findById(id);
+		locationService.delete(location);
+		return "redirect:/location";
+	}
+
+}

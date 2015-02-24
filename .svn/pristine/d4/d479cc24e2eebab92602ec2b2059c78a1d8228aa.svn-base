@@ -1,0 +1,144 @@
+label.title=ITAchiever
+
+# Login source 
+label.login=Login
+label.logout=Logout
+label.remember=Remember me
+label.loginerror=Login Error
+label.signin=Sign in
+label.signup=Sign up
+label.signout=Sign out
+
+#User registration success 
+label.registration.success.welldon = Well done!
+label.registration.success.info = You are registered but a site administrator must review your account, you will not be able to login until your account has been approved.
+
+# User Form source
+label.role=Role
+label.password=Password
+label.confirmPassword=Confirm password
+label.firstname=First Name
+label.lastname=Last Name
+label.email=E-mail
+label.created=Created
+label.sortbylogin=Sort Up
+label.sortbylogindown=Sort Down
+label.filter=Filter
+label.deactivate=Deactivate
+
+label.noCurrentGroups=No current groups
+label.noCurrentDirections=No current directions
+label.role.user=User
+label.role.student=Student
+label.role.manager=Manager
+label.role.admin=Administrator
+
+# User Form Validation source
+Pattern.user.login = Login must contain at least 4 letters
+Pattern.user.password = Password must contain at least 6 character
+Pattern.user.email = Email must look like example@com.ua
+label.confirmPasswordFail = This doesn't match the above password
+
+label.required.password=Please enter a password
+label.required.confirmPassword=Please confirm your password
+label.required.firstName=First name is required field
+label.required.lastName=Last name is required field
+label.required.login=Login is required field
+label.pattern.mismatch.login=Incorrect login
+label.pattern.mismatch.firstName=Incorrect first name
+label.pattern.mismatch.lastName=Incorrect last name
+label.pattern.mismatch.password=Incorrect password
+label.pattern.mismatch.email=Incorrect email
+label.profile=Profile
+label.edit.profile=Edit profile
+label.upload.photo=Upload a different photo...
+label.personal.info=Personal info
+label.useractivation=Activation
+label.user=User
+label.activate=Activate
+
+label.home=Home
+label.admin=Administrator
+label.userManagement=User management
+label.users=Users
+label.active=Active
+label.managers=Managers
+label.addManager=Add a new manager
+label.directions=Directions
+label.groups=Groups
+label.allGroups=All groups
+label.myGroups=My groups
+label.myGroup=My group
+label.futureGroups=Future groups
+label.currentGroups=Current groups
+label.finishedGroups=Finished groups
+label.group = Group
+label.questions=Questions
+label.newquestion=New Question
+label.editquestion=Edit Question
+label.topics=Topics
+label.subtopics=Subtopics
+
+
+label.add=Add
+label.close=Close
+label.delete=Delete
+label.edit=Edit
+label.set=Set
+label.search=Search
+
+label.manager=Manager
+label.direction=Direction
+label.topic=Topic
+label.newtopic=New Topic
+label.edittopic=Edit Topic
+label.subtopic=Subtopic
+label.newsubtopic=New Subtopic
+label.editsubtopic=Edit Subtopic
+label.question=Question
+label.answer=Answer
+label.answers = Answers
+label.isCorrect = Correct
+label.name=Name
+label.creationDate=Creation date
+
+label.testing=Testing
+label.generate-tests=Generate Tests
+
+label.menu=Menu
+label.footer=&copy; sample.net
+Size.direction.name=Must be from 1 to 10 characters!
+Size.group.groupName=Must be from 1 to 10 characters!
+
+label.about=About
+label.usermanagement=Users Management
+
+label.newdirection=New direction
+label.editdirection=Edit direction
+label.newgroup=New group
+label.editgroup=Edit group
+
+label.userEmailExist = User with such email already exists
+label.userLoginExist = User with such login already exists
+
+label.schedule=Schedule
+label.selectday=Select day
+label.selectgroup=Select group
+label.selecttime=Select time
+label.parsefile=Parse file
+label.listmanagers =  Manager's schedule
+label.location = Classrooms
+label.newlocation = New classroom
+label.viewschedule = View and edit schedule
+label.event = Event
+label.selectlocation = Select classroom
+label.locations = Classrooms 
+label.start=Start
+label.finish=Finish
+label.apply=Apply
+label.makeActive=Activate
+
+label.applications = Applications
+label.confirm = Confirm
+label.cancel = Cancel
+label.goHome = go home now

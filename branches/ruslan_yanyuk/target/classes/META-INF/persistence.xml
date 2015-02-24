@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="ItAchiever">
+		<class>com.ita.softserveinc.achiever.entity.BaseEntity</class>
+		<class>com.ita.softserveinc.achiever.entity.Role</class>
+		<class>com.ita.softserveinc.achiever.entity.User</class>
+		<class>com.ita.softserveinc.achiever.entity.Direction</class>
+		<class>com.ita.softserveinc.achiever.entity.Group</class>
+		<class>com.ita.softserveinc.achiever.entity.Question</class>
+		<class>com.ita.softserveinc.achiever.entity.QuizResult</class>
+		<class>com.ita.softserveinc.achiever.entity.Subtopic</class>
+		<class>com.ita.softserveinc.achiever.entity.Topic</class>
+		<class>com.ita.softserveinc.achiever.entity.UserAnswer</class>
+		<class>com.ita.softserveinc.achiever.entity.Event</class>
+		<class>com.ita.softserveinc.achiever.entity.Location</class>
+		<class>com.ita.softserveinc.achiever.entity.Answer</class>
+		<class>com.ita.softserveinc.achiever.entity.Application</class>
+		<class>com.ita.softserveinc.achiever.entity.Article</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+	</persistence-unit>
+</persistence>

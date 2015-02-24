@@ -1,0 +1,72 @@
+package com.ita.softserveinc.achiever.service;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.ita.softserveinc.achiever.entity.Direction;
+import com.ita.softserveinc.achiever.entity.Group;
+import com.ita.softserveinc.achiever.entity.User;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+import com.ita.softserveinc.achiever.exception.InvalidDateException;
+import com.ita.softserveinc.achiever.tool.GroupFormBean;
+import com.ita.softserveinc.achiever.tool.GroupRatingInfoDto;
+
+@Component
+public interface IGroupService {
+
+	void create(Group entity) throws ElementExistsException,
+			InvalidDateException;
+
+	Group update(Group entity) throws ElementExistsException,
+			InvalidDateException;
+
+	void delete(Group entity);
+
+	Group findById(Long id);
+
+	List<Group> findAll();
+
+	List<Group> findByDirection(Direction direction);
+	List<Group> findByDirectionName(String direction);
+
+	Group findByName(String name);
+
+	List<Group> findByUser(User user);
+
+	List<Group> findByUser(String login);
+
+	List<Group> findFutureGroups();
+
+	List<Group> findFutureGroups(String login);
+
+	List<Group> findCurrentGroups();
+
+	List<Group> findCurrentGroups(String login);
+
+	List<Group> findFinishedGroups();
+
+	List<Group> findFinishedGroups(String login);
+
+	List<Group> getChosenGroups(String login);
+
+	Group getGroup(GroupFormBean groupFormBean) throws ElementExistsException,
+			InvalidDateException;
+
+	Group getGroupToEdit(GroupFormBean groupFormBean)
+			throws ElementExistsException, InvalidDateException;
+
+	void applyToGroup(Long groupId, String login) throws ElementExistsException;
+
+	List<Integer> getResultsOnPageCount();
+	
+	List<GroupRatingInfoDto> getGroupInfo(String groupName);
+
+	List<Group> getChosenGroups2(boolean isFuture, boolean isCurrent,
+			boolean isFinished, String login);
+
+	List<Group> getFilteredGroups(String directionName, String startFrom,
+			String startTo, String finishFrom, String finishTo, String login);
+
+}

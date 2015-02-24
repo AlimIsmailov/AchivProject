@@ -1,0 +1,19 @@
+.top-buffer {
+ margin-top:4px; 
+ }
+
+.main-container {
+width:680px;  
+margin:0 auto; 
+
+}
+
+.readOnlyRow {
+background: none; 
+border: none;
+width:140px;
+}
+
+.selectOperationOnRoles {
+background-color:#72C2FF;
+}

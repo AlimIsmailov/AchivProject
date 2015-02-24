@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <DIRECTIONS_to_TOPICS DIRECTION_ID="1" TOPIC_ID="1"/>
+    <DIRECTIONS_to_TOPICS DIRECTION_ID="1" TOPIC_ID="2"/>
+    <DIRECTIONS_to_TOPICS DIRECTION_ID="2" TOPIC_ID="1"/>
+    <DIRECTIONS_to_TOPICS DIRECTION_ID="2" TOPIC_ID="2"/>
+</dataset>

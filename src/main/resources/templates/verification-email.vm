@@ -1,0 +1,9 @@
+<html>
+    <body>
+    	
+       <p> Please <a href="${model.getHostNameUrl()}/verify/email/${model.getEncodedToken()}">click here</a> to validate your email address.</p>
+              
+
+       
+    </body>
+</html>

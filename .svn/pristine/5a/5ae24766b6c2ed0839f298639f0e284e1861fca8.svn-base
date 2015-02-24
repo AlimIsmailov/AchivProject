@@ -1,0 +1,60 @@
+package com.ita.softserveinc.achiever.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.NoResultException;
+
+import org.springframework.stereotype.Repository;
+
+import com.ita.softserveinc.achiever.entity.Application;
+import com.ita.softserveinc.achiever.entity.Group;
+import com.ita.softserveinc.achiever.entity.User;
+@Repository
+public class ApplicationDaoImpl extends GenericDaoImpl<Application> implements
+		IApplicationDao {
+
+	public ApplicationDaoImpl() {
+
+	}
+	/**
+	 * @throws NoElementException 
+	 * 
+	 */
+	public Application findByUser(User user){
+		Application foundApplication = null;
+		try{
+			foundApplication=entityManager.createNamedQuery("Application.findByUser", Application.class).setParameter("user", user).getSingleResult();
+		}catch(NoResultException e){
+			return null;
+		}
+		return foundApplication;
+	}
+	/**
+	 * @throws NoElementException
+	 */
+	public List<Application> findActiveByGroup(Group group, int status) {
+		List<Application> foundApplications = new ArrayList<Application>();
+		try{
+			foundApplications=entityManager.createNamedQuery("Application.findActiveByGroup", Application.class).setParameter("group", group).setParameter("status", status).getResultList();
+		}catch(NoResultException e){
+			return new ArrayList<Application>();
+		}
+		return foundApplications;
+	}
+	@Override
+	public List<Application> findByStatus(int status) {
+		System.err.println("In appDao: findByStatus");
+		List<Application> foundApplications = new ArrayList<Application>();
+		try{
+			System.err.println("In try!");
+			foundApplications=entityManager.createNamedQuery("Application.findByStatus", Application.class).setParameter("status", status).getResultList();
+			//foundApplications=entityManager.createNamedQuery("Application.findByStatus", Application.class).setParameter("status", 1).getResultList();
+			System.err.println("Found applications! from dao: "+foundApplications);
+		}catch(NoResultException e){
+			System.err.println("NoResultException catched from ApplicationDao!");
+			return new ArrayList<Application>();
+		}
+		return foundApplications;
+	}
+}

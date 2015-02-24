@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+	prefix="security"%>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags"%>
+<link rel="stylesheet" type="text/css"
+	href="<c:url value="/resources/css/table.css" />" />
+
+<tiles:insertDefinition name="defaultTemplate">
+	<tiles:putAttribute name="body">
+
+		<div class="body">
+			<security:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+
+				<!-- Button trigger modal -->
+				<div class="panel" style='display: none'>
+					<table>
+						<tr>
+							<td>
+								<button class="btn btn-primary btn-lg" data-toggle="modal"
+									data-target="#myModal">
+									<spring:message code="label.newevent" />
+								</button> <form:form action="addevent" commandName="eventFormBean"
+									class="form-horizontal" method="post">
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">
+														<span>&times;</span><span class="sr-only">Close</span>
+													</button>
+													<h4 class="modal-title" id="myModalLabel">
+														<spring:message code="label.newevent" />
+													</h4>
+												</div>
+												<div class="modal-body">
+													<label for="group" class="col-sm-2 control-label">
+														<spring:message code="label.group" />
+													</label>
+													<div class="col-sm-10">
+														<form:select path="group" items="${groupList}"
+															itemLabel="groupName" itemValue="groupName"
+															cssClass="form-control">
+														</form:select>
+													</div>
+													<label for="location" class="col-sm-2 control-label">
+														<spring:message code="label.location" />
+													</label>
+													<div class="col-sm-10">
+														<form:select path="location" items="${locationList}"
+															itemLabel="name" itemValue="id" cssClass="form-control">
+														</form:select>
+													</div>
+													<label for="eventDate" class="col-sm-2 control-label">
+														<spring:message code="label.day" />
+													</label>
+													<div class="col-sm-10">
+														<div class="form">
+															<input class="meeting-date form-control" type="text"
+																name="eventDate">
+														</div>
+													</div>
+													<label for="starttime" class="col-sm-2 control-label">
+														<spring:message code="label.start" />
+													</label>
+													<div class="col-sm-10">
+														<input class="meeting-start-time form-control" type="text"
+															name="starttime">
+													</div>
+													<label for="endtime" class="col-sm-2 control-label">
+														<spring:message code="label.finish" />
+													</label>
+													<div class="col-sm-10">
+														<input class="meeting-end-time form-control" type="text"
+															name="endtime">
+													</div>
+
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default"
+														data-dismiss="modal">
+														<spring:message code="label.close" />
+													</button>
+													<input type="hidden" name="date" value="${date}" /> <input
+														type="hidden" name="week" value="${week}" /> <input
+														type="hidden" name="scheduleParameter" value="${scheduleParameter}" /> <input
+														type="submit" class="btn btn-primary"
+														value="<spring:message code="label.add"/>" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</form:form>
+							</td>
+							<td><button class="btn btn-primary btn-lg"
+									data-toggle="modal" data-target="#uploadModal">
+									<spring:message code="label.upload" />
+								</button> <form:form action="uploadFile" enctype="multipart/form-data"
+									class="form-horizontal" method="post">
+									<!-- Modal -->
+									<div class="modal fade" id="uploadModal" tabindex="-1"
+										role="dialog">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">
+														<span>&times;</span><span class="sr-only">Close</span>
+													</button>
+													<h4 class="modal-title" id="uploadModalLabel">
+														<spring:message code="label.upload" />
+													</h4>
+												</div>
+												<div class="modal-body">
+													<spring:message code="label.uploadCsvFile"  />
+													<input type="file" name="file">
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default"
+														data-dismiss="modal">
+														<spring:message code="label.close" />
+													</button>
+													<input
+														type="hidden" name="week" value="${week}" /> <input
+														type="hidden" name="scheduleParameter" value="${scheduleParameter}" />
+													<input type="submit" class="btn btn-primary"
+														value="<spring:message code="label.uploadaction"/>" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</form:form></td>
+
+							<td><button class="btn btn-primary btn-lg"
+									data-toggle="modal" data-target="#downloadModal">
+									<spring:message code="label.download" />
+								</button> <form:form action="downloadFile" class="form-horizontal"
+									method="post">
+									<!-- Modal -->
+									<div class="modal fade" id="downloadModal" tabindex="-1">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">
+														<span>&times;</span><span class="sr-only">Close</span>
+													</button>
+													<h4 class="modal-title" id="downloadModalLabel">
+														<spring:message code="label.download" />
+													</h4>
+												</div>
+												<div class="modal-body">
+													<spring:message code="label.selecttimerange" />
+													<div class="input-daterange input-group" id="datepicker">
+														<input type="text" class="input-sm form-control"
+															name="start" /> <span class="input-group-addon">to</span>
+														<input type="text" class="input-sm form-control"
+															name="end" /> <input type="hidden" name="varlogin"
+															value="${scheduleParameter}" />
+
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default"
+														data-dismiss="modal">
+														<spring:message code="label.close" />
+													</button>
+													<input type="submit" class="btn btn-primary"
+														value="<spring:message code="label.downloadaction"/>" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</form:form></td>
+						</tr>
+					</table>
+				</div>
+			</security:authorize>
+
+			<security:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+				<p class="flip"
+					style='width: 100%; height: 50px; text-align: center; margin: 0 auto; cursor: pointer'>
+					<b class="head_b">Edit Mode</b>
+				<h2>
+			</security:authorize>
+
+			<p align="CENTER">
+				<spring:message code="label.schedule" />
+			</p>
+			</h2>
+			<h3>
+				<p align="CENTER">
+					<joda:format value="${date.dayOfWeek().withMinimumValue()}"
+						pattern="dd MMM yyyy " />
+					-
+					<joda:format value="${date.dayOfWeek().withMaximumValue()}"
+						pattern="dd MMM yyyy " />
+				</p>
+			</h3>
+
+
+			<!-- Week navigation buttons -->
+			<table align="center">
+				<tr>
+					<td><form:form action="${date.getWeekOfWeekyear()-1}"
+							method="post">
+							<input type="hidden" name="scheduleParameter" value="${scheduleParameter}" />
+							<input type="hidden" name="week"
+								value="${date.getWeekOfWeekyear()-1}" />
+							<input type="submit" class="btn btn-primary"
+								value="<spring:message code="label.previousWeek"/>" />
+						</form:form></td>
+					<td><form:form action="${currentweek}" method="post">
+							<input type="hidden" name="scheduleParameter" value="${scheduleParameter}" />
+							<input type="hidden" name="week" value="${currentweek}" />
+							<input type="submit" class="btn btn-primary"
+								value="<spring:message code="label.currentWeek"/>" />
+						</form:form></td>
+					<td><form:form action="${date.getWeekOfWeekyear()+1}"
+							method="post">
+							<input type="hidden" name="scheduleParameter" value="${scheduleParameter}" />
+							<input type="hidden" name="week"
+								value="${date.getWeekOfWeekyear()+1}" />
+							<input type="submit" class="btn btn-primary"
+								value="<spring:message code="label.nextWeek"/>" />
+						</form:form></td>
+
+				</tr>
+			</table>
+			<p>
+			<p>
+			<div class="CSSTableGenerator">
+				<table>
+					<tr>
+						<td></td>
+						<c:forEach begin="1" end="5" step="1" var="weekDay">
+							<td><joda:format value="${date.withDayOfWeek(weekDay)}"
+									pattern="EEEE, dd MMMM" /></td>
+						</c:forEach>
+					</tr>
+					<tr>
+						<c:forEach begin="8" end="17" step="1" var="time">
+							<td>${time}:00-${time+1}:00</td>
+							<c:forEach begin="1" end="5" step="1" var="day">
+								<TD align="center" valign="middle" width="800" height="80"><c:forEach
+										items="${eventList}" var="event">
+										<c:if
+											test="${event.startDatetime.getHourOfDay() <= time
+													&& event.endDatetime.getHourOfDay() > time
+													&& event.startDatetime.getDayOfWeek() == day}">
+											<c:out value="${event.location.name}" />
+											<p>
+												<c:out value="${event.group.groupName}" />
+												<c:out value="${event.group.direction.name}" />
+											<p>
+											<div class="panel" style='display: none'>
+												<button class="btn btn-primary btn-sm" data-toggle="modal"
+													data-target="#editModalF${event.id}">
+													<spring:message code="label.edit" />
+												</button>
+												<button class="btn btn-danger" data-toggle="modal"
+													data-target="#myModalDelete${event.id}">
+													<spring:message code="label.delete" />
+												</button>
+												<form:form action="schedule/delete/${event.id}"
+													commandName="eventFormBean" class="form-horizontal"
+													method="get">
+													<!-- Modal -->
+													<div class="modal fade" id="myModalDelete${event.id}"
+														tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+														aria-hidden="false">
+														<div class="modal-dialog">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<button type="button" class="close"
+																		data-dismiss="modal">
+																		<span aria-hidden="true">&times;</span><span
+																			class="sr-only">Close</span>
+																	</button>
+																	<h4 class="modal-title" id="myModalLabel">
+																		<spring:message code="label.delete" />
+																	</h4>
+																</div>
+																<div class="modal-body">
+																	<div class="formGroup">
+																		<spring:message code="label.groupDeleteConfirm" />
+																	</div>
+																</div>
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-default"
+																		data-dismiss="modal">
+																		<spring:message code="label.close" />
+																	</button>
+																	<input type="hidden" name="scheduleParameter"
+																		value="${scheduleParameter}" /> <input type="hidden"
+																		name="week" value="${week}" /> <input type="submit"
+																		class="btn btn-primary"
+																		value="<spring:message code="label.delete"/>" />
+																</div>
+															</div>
+														</div>
+													</div>
+												</form:form>
+											</div>
+											</p>
+											<form:form action="editevent" commandName="eventFormBean"
+												class="form-horizontal" method="post">
+												<!-- Modal -->
+												<div class="modal fade" id="editModalF${event.id}"
+													tabindex="-1" role="dialog">
+													<div class="modal-dialog">
+														<div class="modal-content">
+															<div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal">
+																	<span>&times;</span><span class="sr-only">Close</span>
+																</button>
+																<h4 class="modal-title" id="myModalLabel">
+																	<spring:message code="label.edit" />
+																</h4>
+															</div>
+															<div class="modal-body">
+																<div class="formGroup">
+																	<form:input type="hidden" path="event.id"
+																		value="${event.id}" />
+																	<label for="group" class="col-sm-2 control-label">
+																		<spring:message code="label.group" />
+																	</label>
+																	<div class="col-sm-10">
+																		<form:select path="group" items="${groupList}"
+																			itemLabel="groupName" itemValue="groupName"
+																			cssClass="form-control">
+																		</form:select>
+																	</div>
+																	<label for="location" class="col-sm-2 control-label">
+																		<spring:message code="label.location" />
+																	</label>
+																	<div class="col-sm-10">
+																		<form:select path="location" items="${locationList}"
+																			itemLabel="name" itemValue="id"
+																			cssClass="form-control">
+																		</form:select>
+																	</div>
+																	<label for="eventDate" class="col-sm-2 control-label">
+																		<spring:message code="label.day" />
+																	</label>
+																	<div class="col-sm-10" class="control-label">
+																		<div class="form">
+																			<input class="meeting-date form-control" type="text"
+																				name="eventDate">
+																		</div>
+																	</div>
+																	<label for="starttime" class="col-sm-2 control-label">
+																		<spring:message code="label.start" />
+																	</label>
+																	<div class="col-sm-10">
+																		<input class="meeting-start-time form-control"
+																			type="text" name="starttime">
+																	</div>
+																	<label for="endtime" class="col-sm-2 control-label">
+																		<spring:message code="label.finish" />
+																	</label>
+																	<div class="col-sm-10">
+																		<input class="meeting-end-time form-control"
+																			type="text" name="endtime">
+																	</div>
+																</div>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-default"
+																	data-dismiss="modal">
+																	<spring:message code="label.close" />
+																</button>
+																<input type="hidden" name="date" value="${date}" /> <input
+																	type="hidden" name="scheduleParameter" value="${scheduleParameter}" /> <input
+																	type="hidden" name="week" value="${week}" /> <input
+																	type="submit" class="btn btn-primary"
+																	value="<spring:message code="label.edit"/>" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</form:form>
+										</c:if>
+									</c:forEach></TD>
+							</c:forEach>
+					</tr>
+					</c:forEach>
+				</table>
+			</div>
+			<p>
+			<p>
+				
+				<script type="text/javascript">
+					$('.input-daterange').datepicker({
+						todayHighlight : true,
+						format : "dd-mm-yyyy",
+						weekStart : 1,
+						todayBtn : true,
+						autoclose : true,
+						daysOfWeekDisabled : "0,6"
+					});
+				</script>
+				<script type="text/javascript">
+					$(document)
+							.ready(
+									function() {
+										$head_b = $('.head_b');
+										$(".flip")
+												.click(
+														function() {
+															var vis = $(
+																	'.panel')
+																	.is(
+																			":visible"), text = vis ? 'Edit Mode'
+																	: 'View Mode';
+															$head_b.text(text);
+															$(".panel")
+																	.slideToggle(
+																			"slow");
+														});
+									});
+				</script>
+				<script type="text/javascript">
+					$('.meeting-date').datepicker({
+						startDate : "w",
+						todayHighlight : true,
+						format : "DD dd-mm-yyyy",
+						weekStart : 1,
+						todayBtn : true,
+						autoclose : true,
+						daysOfWeekDisabled : "0,6"
+					});
+
+					$('.meeting-start-time').timepicker({
+						'scrollDefaultNow' : 'true',
+						'closeOnWindowScroll' : 'true',
+						'timeFormat' : 'H:i',
+						'step' : 60,
+						'minTime' : '8:00',
+						'maxTime' : '17:00',
+					}).on('changeTime', function() {
+						var new_end = $(this).timepicker('getTime');
+						new_end.setHours(new_end.getHours() + 1);
+						$('#meeting-end-time').timepicker('setTime', new_end);
+						$('#meeting-end-time').focus();
+					});
+
+					$('.meeting-end-time').timepicker({
+						'scrollDefaultNow' : 'true',
+						'closeOnWindowScroll' : 'true',
+						'timeFormat' : 'H:i',
+						'step' : 60,
+						'minTime' : '9:00',
+						'maxTime' : '18:00',
+					});
+				</script>
+		</div>
+	</tiles:putAttribute>
+</tiles:insertDefinition>

@@ -1,0 +1,87 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="../../template/default/taglib.jsp"%>
+<tiles:insertDefinition name="defaultTemplate">
+	<tiles:putAttribute name="body">
+		<div class="body">
+			<div>
+				<h1 align="left">
+					Modules. Examinations
+				</h1>
+			</div>
+			<table class="table table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th width="50%">Name</th>
+						<th width="10%">Grade</th>
+						<th width="10%">State</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${quizResultList}" var="result">
+						<tr>
+							<td>
+								<c:if test="${result.passed == true }">
+									<form:form action="my-test-detail" commandName="quizResult" method="post">
+										<form:input type="hidden" path="id" value="${result.id}" />
+										<input class="btn btn-link" type="submit" value="${result.name}" />
+									</form:form>
+								</c:if> <c:if test="${result.passed == false }">${result.name}</c:if>
+							</td>
+							<td>
+								<c:if test="${result.totalGrade == null}">Not passed</c:if>
+								<c:if test="${result.totalGrade != null}">${result.totalGrade}</c:if>
+							</td>
+							<td>
+								<c:if test="${result.passed == true }">
+									<button type="button" class="btn btn-primary" disabled="disabled">Finished</button>
+								</c:if> 
+								<c:if test="${result.passed == false }">
+									<form:form action="pass-the-test" commandName="quizResult" method="post">
+										<form:input type="hidden" path="id" value="${result.id}" />
+											<a href="" class="btn btn-primary triggerStart">Pass the test</a>
+												<div class="modal fade" id="modalStart" tabindex="-1">
+													<div class="modal-dialog">
+														<div class="modal-content">
+															<div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal">
+																	<span>&times;</span><span class="sr-only">Close</span>
+																</button>
+																<h3 class="modal-title" id="myModalLabel">Pass the test</h3>
+															</div>
+															<div class="modal-body">
+																<h4>Are you sure you want begin passing the test?</h4>
+																<br />
+																<p><em>P.S. Select only right answers. Good luck!</em></p>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+																	<input class="btn btn-warning startBtn" type="submit" value="Start" />
+															</div>
+														</div>
+													</div>
+												</div>
+									</form:form>
+								</c:if>
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+
+		<script type="text/javascript">
+			$(document).ready(
+					function() {
+						$(".triggerStart").click(
+								function(e) {
+									e.preventDefault();
+									$("#modalStart .startBtn").attr("href",
+											$(this).attr("href"));
+									$("#modalStart").modal();
+								});
+					});
+		</script>
+
+	</tiles:putAttribute>
+</tiles:insertDefinition>

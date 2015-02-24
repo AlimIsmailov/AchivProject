@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ROLES ID="1" NAME="name1" />
+	<USERS ID="1" FIRST_NAME="name1" LAST_NAME="name1" LOGIN="login1"
+		PASSWORD="password1" EMAIL="email1" ROLE="1" />
+	<TOPICS ID="1" NAME="name1" />
+	<SUBTOPICS ID="1" NAME="name1" TOPIC="1" />
+	<QUESTIONS ID="1" QUESTION="question1" CORRECT_ANSWER="correct answer1"
+		SUBTOPIC_ID="1" />
+	<QUESTIONS ID="2" QUESTION="question2" CORRECT_ANSWER="correct answer2"
+		SUBTOPIC_ID="1" />
+	<QUESTIONS ID="3" QUESTION="question3" CORRECT_ANSWER="correct answer3"
+		SUBTOPIC_ID="1" />
+	<QUIZ_RESULT ID="1" QUIZ_NAME="name1" USER_ID="1"
+		TOTAL_GRADE="100" />
+	<USER_ANSWERS ID="1" QUESTION_ID="1" USER_ANSWER="answer1"
+		ANSWER_GRADE="15" QUIZ_RESULT_ID="1" />
+	<USER_ANSWERS ID="2" QUESTION_ID="2" USER_ANSWER="answer3"
+		ANSWER_GRADE="40" QUIZ_RESULT_ID="1" />
+</dataset>

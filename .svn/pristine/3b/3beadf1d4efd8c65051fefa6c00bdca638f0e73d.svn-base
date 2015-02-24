@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<definition name="defaultTemplate" template="/WEB-INF/template/default/template.jsp">
+		<put-attribute name="header"
+			value="/WEB-INF/template/default/header.jsp" />
+		<put-attribute name="menu" value="/WEB-INF/template/default/menu.jsp" />
+		<put-attribute name="footer"
+			value="/WEB-INF/template/default/footer.jsp" />
+	</definition>
+
+	<definition name="home" extends="defaultTemplate">
+		<put-attribute name="title" value="Home" />
+		<put-attribute name="body" value="/home.jsp" />
+	</definition>
+
+	<definition name="about" extends="defaultTemplate">
+		<put-attribute name="title" value="About" />
+		<put-attribute name="body" value="/about.jsp" />
+	</definition>
+
+	<definition name="user" extends="defaultTemplate">
+		<put-attribute name="title" value="Add user" />
+		<put-attribute name="body" value="/user.jsp" />
+	</definition>
+
+	<definition name="topic" extends="defaultTemplate">
+		<put-attribute name="title" value="Add topic" />
+		<put-attribute name="body" value="/topic.jsp" />
+	</definition>
+
+	<definition name="subtopic" extends="defaultTemplate">
+		<put-attribute name="title" value="Add suptopic" />
+		<put-attribute name="body" value="/subtopic.jsp" />
+	</definition>
+
+	<definition name="question" extends="defaultTemplate">
+		<put-attribute name="title" value="Add question" />
+		<put-attribute name="body" value="/question.jsp" />
+	</definition>
+
+	<definition name="direction" extends="defaultTemplate">
+		<put-attribute name="title" value="Directions" />
+		<put-attribute name="body" value="/direction.jsp" />
+	</definition>
+
+	<definition name="new_direction" extends="defaultTemplate">
+		<put-attribute name="title" value="New direction" />
+		<put-attribute name="body" value="/new_direction.jsp" />
+	</definition>
+
+	<definition name="group" extends="defaultTemplate">
+		<put-attribute name="title" value="Groups" />
+		<put-attribute name="body" value="/group.jsp" />
+	</definition>
+
+	<definition name="new_group" extends="defaultTemplate">
+		<put-attribute name="title" value="New group" />
+		<put-attribute name="body" value="/new_group.jsp" />
+	</definition>
+
+	<definition name="Login" extends="defaultTemplate">
+		<put-attribute name="title" value="Login" />
+		<put-attribute name="body" value="/login.jsp" />
+	</definition>
+
+	<definition name="manager" extends="defaultTemplate">
+		<put-attribute name="title" value="Manager" />
+		<put-attribute name="body" value="/manager.jsp" />
+	</definition>
+
+	<definition name="registration" extends="defaultTemplate">
+		<put-attribute name="title" value="Registration" />
+		<put-attribute name="body" value="/registration.jsp" />
+	</definition>
+
+	<definition name="admin" extends="defaultTemplate">
+		<put-attribute name="title" value="Admin" />
+		<put-attribute name="body" value="/admin.jsp" />
+	</definition>
+
+	<definition name="event" extends="defaultTemplate">
+		<put-attribute name="title" value="Schedule" />
+		<put-attribute name="body" value="/schedule.jsp" />
+	</definition>
+	
+	<definition name="adminschedule" extends="defaultTemplate">
+		<put-attribute name="title" value="Schedule" />
+		<put-attribute name="body" value="/adminschedule.jsp" />
+	</definition>
+	
+	<definition name="error" extends="defaultTemplate">
+		<put-attribute name="title" value="Error 404" />
+		<put-attribute name="body" value="/404.jsp/" />
+	</definition>
+
+	<definition name="show_profile" extends="defaultTemplate">
+		<put-attribute name="content"
+			value="/WEB-INF/views/user/showprofile.jsp" />
+
+	</definition>
+
+	<definition name="edit_profile" extends="defaultTemplate">
+		<put-attribute name="content"
+			value="/WEB-INF/views/user/editprofile.jsp" />
+
+	</definition>
+</tiles-definitions>

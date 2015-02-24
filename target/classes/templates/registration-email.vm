@@ -1,0 +1,9 @@
+<html>
+    <body>
+    	
+       <p> Your registration is complete when you <a href="${model.getHostNameUrl()}/verify/registration/${model.getEncodedToken()}">click here</a> to validate your email address.</p>
+              
+
+       
+    </body>
+</html>

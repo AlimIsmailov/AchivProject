@@ -1,0 +1,31 @@
+package com.ita.softserveinc.achiever.tool;
+
+import javax.validation.Valid;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ita.softserveinc.achiever.entity.Article;
+
+public class ArticleFormBean {
+	
+	@Valid
+	private Article article;
+	private MultipartFile file;
+
+	public Article getArticle() {
+		return article;
+	}
+
+	public void setArticle(Article article) {
+		this.article = article;
+	}
+
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
+
+}

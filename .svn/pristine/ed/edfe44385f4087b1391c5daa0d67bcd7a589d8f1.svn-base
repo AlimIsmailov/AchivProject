@@ -1,0 +1,40 @@
+package com.ita.softserveinc.achiever.tool;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.ita.softserveinc.achiever.entity.Application;
+import com.ita.softserveinc.achiever.service.IApplicationService;
+
+@Component
+public class ApplicationSchedule {
+	
+	/*private static final long TIME_GAP=2629743830L;*/
+	private static final long TIME_GAP=300000L;
+	private static final int APPLICATION_DELETED=2;
+	
+	@Autowired
+	private IApplicationService applicationService;
+	
+	@Scheduled(fixedRate=300000)
+	public void checkApplicationSchedule(){
+		System.err.println("Application Schedule Started!");
+		Date today = new Date(System.currentTimeMillis());
+		System.err.println("Today: "+today);
+		List<Application> activeApplications = applicationService.findByStatus(2);
+		System.err.println("Active applications!: "+activeApplications);
+		for (Application activeApplication: activeApplications){
+			if (today.getTime() - activeApplication.getCreated().getTime() >= TIME_GAP){
+				System.err.println("In if: ");
+				applicationService.delete(activeApplication);
+				System.err.println("After delete");
+			}
+		}
+		System.err.println("Application Schedule Ended!");
+	}
+
+}

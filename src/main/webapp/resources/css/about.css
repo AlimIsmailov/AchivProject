@@ -1,0 +1,333 @@
+@charset "utf-8";
+/* CSS Document */
+
+html {
+	color: #000;
+	background: #FFF;
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code,
+	form, fieldset, legend, input, textarea, p, blockquote, th, td {
+	margin: 0;
+	padding: 0;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+fieldset, img {
+	border: 0;
+}
+
+address, caption, cite, code, dfn, em, strong, th, var {
+	font-style: normal;
+	font-weight: normal;
+}
+
+li {
+	list-style: none;
+}
+
+caption, th {
+	text-align: left;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-size: 100%;
+	font-weight: normal;
+}
+
+q:before, q:after {
+	content: '';
+}
+
+abbr, acronym {
+	border: 0;
+	font-variant: normal;
+}
+
+sup {
+	vertical-align: text-top;
+}
+
+sub {
+	vertical-align: text-bottom;
+}
+
+input, textarea, select {
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+input, textarea, select {
+	*font-size: 100%;
+}
+
+legend {
+	color: #000;
+}
+
+@font-face {
+	font-family: 'BebasRegular';
+	src: url('font/BEBAS___-webfont.eot');
+	src: url('font/BEBAS___-webfont.eot?#iefix') format('embedded-opentype'),
+		url('font/BEBAS___-webfont.woff') format('woff'),
+		url('font/BEBAS___-webfont.ttf') format('truetype'),
+		url('font/BEBAS___-webfont.svg#BebasRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.paralax-div {
+	z-index: 1;
+	width: 100%;
+}
+
+.form-fix {
+	margin-right: auto;
+	margin-left: auto;
+	width: 40%;
+}
+
+.form-fix button {
+	margin-top: 12px;
+}
+
+.navigation {
+	position: fixed;
+	z-index: 1;
+	top: 20px;
+}
+
+.navigation li {
+	color: #333333;
+	display: block;
+	padding: 0 10px;
+	line-height: 30px;
+	font-size: 10px;
+	margin-bottom: 2px;
+	-webkit-transition: all .2s ease-in-out;
+	border-bottom: 1px solid black;
+	text-align: left;
+	width: 36px;
+}
+
+.navigation li:hover, .active {
+	font-weight: 900;
+	cursor: pointer;
+	width: 50px !important;
+}
+
+.envatologo {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 446px;
+	margin-top: -41px;
+	margin-left: -223px;
+	z-index: 1;
+}
+
+.slide {
+	background-attachment: fixed;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	box-shadow: inset 0px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.wrapper {
+	width: 960px;
+	height: 200px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.slideno {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	font-size: 100px;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.3);
+}
+
+.button:hover {
+	cursor: pointer;
+}
+
+.button {
+	position: relative;
+	height: 0px;
+	width: 0px;
+	padding: 0px;
+	bottom: 0px;
+	top: 390px;
+	left: 50%;
+}
+
+.button-begin {
+	-webkit-transform: rotate(0deg) skew(0deg);
+	transform: rotate(0deg) skew(0deg);
+	border-bottom: 20px solid #428BCA;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
+
+.button-next {
+	-webkit-transform: rotate(0deg) skew(0deg);
+	transform: rotate(0deg) skew(0deg);
+	border-top: 20px solid #428BCA;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
+
+.image-container {
+	width: 200;
+	height: auto;
+}
+
+.present-back {
+	z-index: 150;
+}
+
+/******************************
+ SLIDE 1 
+*******************************/
+#slide1 {
+	background-color: #5c9900;
+}
+
+#slide1 span:first-child {
+	position: absolute;
+	top: 50%;
+	left: 10%;
+	font-family: 'Alegreya Sans SC', sans-serif;
+	font-weight: 900;
+	font-size: 40px;
+	color: orange;
+}
+
+#slide1 span:nth-child(2) {
+	position: absolute;
+	top: 300px;
+	right: 100px;
+	font-family: Raleway;
+}
+/******************************
+ SLIDE 2 
+*******************************/
+#slide2 {
+	background-color: #64c1ff;
+}
+
+#slide2 img:first-child {
+	position: absolute;
+	bottom: -250%;
+	left: 0%;
+}
+
+#slide2 img:nth-child(2) {
+	position: absolute;
+	bottom: 10%;
+	left: 25%;
+}
+
+#slide2 img:nth-child(3) {
+	position: absolute;
+	bottom: -110%;
+	left: 40%;
+}
+
+#slide2 img:nth-child(4) {
+	position: absolute;
+	bottom: -140%;
+	left: -30%;
+}
+
+#slide2 img:nth-child(5) {
+	position: absolute;
+	bottom: -110%;
+	left: -10%;
+}
+
+#slide2 img:nth-child(6) {
+	position: absolute;
+	bottom: -240%;
+	left: 55%;
+}
+
+#slide2 img:nth-child(7) {
+	position: absolute;
+	bottom: -250%;
+	left: 0%;
+}
+
+#slide2 img:nth-child(8) {
+	position: absolute;
+	bottom: -250%;
+	left: 0%;
+}
+/******************************
+ SLIDE 3 
+*******************************/
+#slide3 {
+	background-color: #b6c10b;
+}
+
+#slide3 img:first-child {
+	position: absolute;
+	top: 100px;
+	left: 300px;
+}
+
+#slide3 img:nth-child(2) {
+	position: absolute;
+	top: 100px;
+	left: 100px;
+}
+
+#slide3 img:nth-child(3) {
+	position: absolute;
+	top: 150px;
+	left: 300px;
+}
+
+#slide3 img:nth-child(4) {
+	position: absolute;
+	top: 450px;
+	left: 300px;
+}
+
+#slide3 img:nth-child(5) {
+	position: absolute;
+	top: 200px;
+	right: 300px;
+}
+
+#slide3 img:nth-child(6) {
+	position: absolute;
+	top: 100px;
+	right: 300px;
+}
+/******************************
+ SLIDE 4 
+*******************************/
+#slide4 {
+	background-image: url(../images/Slide4/desktop4.jpg);
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+#slide4 .parallaxbg {
+	position: absolute;
+	right: 40px;
+	top: 40px;
+	font-size: 28px;
+	color: rgba(51, 51, 51, 0.3);
+}

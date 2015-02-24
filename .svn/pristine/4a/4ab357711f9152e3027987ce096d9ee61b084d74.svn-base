@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<groupPaging>
+	<countOfResults>3</countOfResults>
+	<countOfResults>5</countOfResults>
+	<countOfResults>10</countOfResults>
+	<countOfResults>15</countOfResults>
+	<countOfResults>20</countOfResults>
+	<countOfResults>25</countOfResults>
+	<countOfResults>30</countOfResults>
+</groupPaging>

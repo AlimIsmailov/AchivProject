@@ -1,0 +1,30 @@
+package com.ita.softserveinc.achiever.service;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import static org.mockito.Mockito.*;
+
+import com.ita.softserveinc.achiever.entity.Direction;
+import com.ita.softserveinc.achiever.exception.ElementExistsException;
+
+public class IDirectionServiceTest {
+
+	@Test(expected=ElementExistsException.class)
+	public void testCreate() throws ElementExistsException {
+		Direction java = new Direction("Java");
+		IDirectionService directionService = mock(IDirectionService.class);
+		doThrow(new ElementExistsException()).when(directionService).create(java);
+		directionService.create(java);
+	}
+
+	@Test(expected=ElementExistsException.class)
+	public void testUpdate() throws ElementExistsException {
+		Direction java = new Direction("Java");
+		IDirectionService directionService = mock(IDirectionService.class);
+		doThrow(new ElementExistsException()).when(directionService).update(java);
+		directionService.update(java);
+	}
+
+}
